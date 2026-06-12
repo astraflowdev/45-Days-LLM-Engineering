@@ -23,3 +23,9 @@ Thumbs.db
 # Course scratch
 dump/
 docs/_syllabus.txt
+
+# Career decks drafted ahead but not yet published (keep only through Day 3)
+Phase-1-Foundations/Day-04-Loops/career-talk/
+Phase-1-Foundations/Day-05-Functions-and-Scope/career-talk/
+Phase-1-Foundations/Day-06-Data-Structures/career-talk/
+Phase-1-Foundations/Day-07-Errors-Modules-and-OOP/career-talk/
