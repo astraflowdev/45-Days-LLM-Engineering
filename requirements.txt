@@ -1,9 +1,16 @@
 # Days 1–7 (Python fundamentals) run on the standard library alone — no installs needed.
 #
-# Dependencies are added here as the AI track begins (Day 8+). Examples to come:
-#   requests
-#   python-dotenv
-#   pydantic
-#   google-generativeai
-#
-# Install with:  pip install -r requirements.txt
+# The AI track (Day 8+) adds dependencies here. Install with:
+#   pip install -r requirements.txt
+
+# --- Phase 1 · Day 8 — Python for AI ---
+requests                   # call web APIs (and LLMs)
+httpx                      # async HTTP client (async equivalent of requests)
+pydantic                   # data validation / structured output models
+# python-dotenv listed below (shared with Day 16)
+
+# --- Phase 2 · Day 16 — Embeddings (RAG & Memory) ---
+numpy
+sentence-transformers      # local, free embeddings (all-MiniLM-L6-v2)
+google-generativeai        # Gemini embeddings (free tier) — needs GEMINI_API_KEY
+python-dotenv              # load GEMINI_API_KEY from a .env file
