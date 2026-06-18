@@ -9,6 +9,10 @@ httpx                      # async HTTP client (async equivalent of requests)
 pydantic                   # data validation / structured output models
 # python-dotenv listed below (shared with Day 16)
 
+# --- Phase 1 · Day 12 — Multi-provider ---
+groq                       # fast hosted open models (free tier) — needs GROQ_API_KEY
+ollama                     # run open models locally (no key) — needs the Ollama app
+
 # --- Phase 2 · Day 16 — Embeddings (RAG & Memory) ---
 numpy
 sentence-transformers      # local, free embeddings (all-MiniLM-L6-v2)
