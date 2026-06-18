@@ -13,6 +13,11 @@ pydantic                   # data validation / structured output models
 groq                       # fast hosted open models (free tier) — needs GROQ_API_KEY
 ollama                     # run open models locally (no key) — needs the Ollama app
 
+# --- Phase 1 · Day 13 — Working with data ---
+pdfplumber                 # extract text from PDFs
+beautifulsoup4             # parse HTML for light web scraping
+# (json + csv are in the standard library)
+
 # --- Phase 2 · Day 16 — Embeddings (RAG & Memory) ---
 numpy
 sentence-transformers      # local, free embeddings (all-MiniLM-L6-v2)
