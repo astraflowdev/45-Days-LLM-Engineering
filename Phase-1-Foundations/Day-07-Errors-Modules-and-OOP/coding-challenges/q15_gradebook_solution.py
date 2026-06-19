@@ -16,7 +16,7 @@ def averages(gradebook):
     for name, marks in gradebook.items():
         result[name] = round(sum(marks) / len(marks), 2)
     return result
-
+ 
 
 def topper(gradebook):
     """Return (name, average) for the student with the highest average."""
