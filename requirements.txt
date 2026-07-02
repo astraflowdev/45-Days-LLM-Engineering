@@ -20,3 +20,4 @@ numpy
 sentence-transformers      # local, free embeddings (all-MiniLM-L6-v2) — our default
 google-genai               # optional: Gemini embeddings — needs GEMINI_API_KEY
 python-dotenv              # load API keys (GROQ_API_KEY, etc.) from a .env file
+chromadb                   # vector database: persist embeddings, retrieve nearest docs

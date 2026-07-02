@@ -1,7 +1,7 @@
 # 04 — Cosine Similarity (The Closeness Formula, by Hand)
 
 Module 03 let the library score similarity. Now you'll compute that score yourself — it's a short
-formula — so that tomorrow, when we build semantic search from scratch, there's no black box left.
+formula — so that tomorrow, when we store and retrieve vectors with Chroma, there's no black box left.
 
 ## Why not just distance?
 Module 01 used straight-line **distance**. For text embeddings we prefer **cosine similarity**, which

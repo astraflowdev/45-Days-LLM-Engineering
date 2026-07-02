@@ -28,7 +28,7 @@ beginners. Open **`index.html`** in any browser — no build step, no internet n
 | 13 | Where this goes | The RAG pipeline diagram: docs→embed→DB, question→embed→query, cosine→nearest→answer. Today = the "embed" box. |
 | 14 | Recap | The five takeaways. |
 | 15 | Your move | Run modules 01→05, then the two exercises (semantic search + odd-one-out). |
-| 16 | Close | "Meaning is just a point in space." Tee up Day 18 (from-scratch semantic search). |
+| 16 | Close | "Meaning is just a point in space." Tee up Day 18 (Chroma vector DB + retrieval + chat). |
 
 ## Teaching tips
 - **Slides 4 & 7 are the whole lesson** — spend time there. If students get "close on the map =

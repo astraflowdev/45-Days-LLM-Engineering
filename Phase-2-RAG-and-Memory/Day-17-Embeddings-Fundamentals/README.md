@@ -62,7 +62,7 @@ python 02-first-embedding/first_embedding.py     # downloads the model on first 
 Build a tiny **semantic search** ("find the most similar note") and an **odd-one-out** finder using
 the embeddings + cosine similarity you learned today. See [`exercises/`](exercises/).
 
-> Today you embed text and measure closeness by hand. **Day 18** turns this into a from-scratch
-> semantic search engine; **Day 19** stores the vectors in a real vector database (Chroma).
+> Today you embed text and measure closeness by hand. **Day 18** stores those vectors in a real
+> database (**Chroma**), retrieves the nearest notes, and feeds the results into an AI chat loop.
 
-➡ Next (Day 18): Semantic search from scratch — numpy + cosine over a folder of documents.
+➡ Next (Day 18): Chroma vector DB — save vectors, retrieve them, and chat with AI.
