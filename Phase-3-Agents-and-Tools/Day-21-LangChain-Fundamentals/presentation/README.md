@@ -24,7 +24,7 @@ template as the Day-17 embeddings deck.
 | 10 | ReAct loop | Think → Act → Observe → repeat → Answer. The diagram is the whole idea. |
 | 11 | Tools | A tool is a Python function; the **docstring is the API** the model reads. `@tool`, `bind_tools`. |
 | 12 | LangGraph | Chains are lines; loops/branches need a state machine. `create_agent` runs on LangGraph. |
-| 13 | Roadmap | Day 21 → 22 (LangGraph) → 23 (tools) → 24 (agent) → … → Mini-project 3. |
+| 13 | Roadmap | Day 21 → 22 (LangChain in practice: RAG + Streamlit) → 23 (LangGraph) → 24 (tools) → 25 (agent) → … → Mini-project 3. |
 | 14 | Recap | Five takeaways. |
 | 15 | Your move | Run modules 01→06 (they run with no key), then the two exercises. |
 | 16 | Close | "Learn `invoke` and `|`, and everything composes." Tease Day 22. |

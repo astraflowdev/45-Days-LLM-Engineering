@@ -35,3 +35,13 @@ python-docx                # read text from .docx uploads (note: pip name python
 langchain                  # the framework: prompts, LCEL (prompt | model | parser), parsers (v1.x)
 langchain-groq             # ChatGroq — LangChain's Groq integration (reuses GROQ_API_KEY)
 # reuses pydantic + python-dotenv (already listed above)
+
+# --- Phase 3 · Day 22 — LangChain in Practice: RAG & a Streamlit Chatbot ---
+langchain-chroma           # Chroma vector store, the modern LangChain integration
+langchain-huggingface      # local sentence-transformers embeddings through LangChain (no key)
+langchain-text-splitters   # RecursiveCharacterTextSplitter (chunking for RAG)
+# reuses langchain + langchain-groq + sentence-transformers + streamlit + python-dotenv (above)
+
+# --- Phase 3 · Day 23 — LangGraph: State Machines for AI ---
+langgraph                  # graphs of nodes/edges: branching, loops, memory (checkpointers) — v1.x
+# reuses langchain-groq + langchain-core + python-dotenv (already listed above)

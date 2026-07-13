@@ -93,5 +93,5 @@ Do both in [`exercises/`](exercises/README.md):
 > and every piece (prompt, model, parser, retriever, tool) snaps together the same way. That's the
 > base the rest of Phase 3 builds agents on.
 
-➡ Next: **Day 22 — LangGraph** — state machines for AI: when a straight `|` chain isn't enough and
-you need loops, branching, and tool-calling agents.
+➡ Next: **Day 22 — LangChain in Practice** — put it all to work: build **RAG with LangChain**
+(splitters, vector store, retriever, an LCEL RAG chain) and a **Streamlit × LangChain chatbot**.

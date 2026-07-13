@@ -88,31 +88,34 @@ questions → cited answers, grounded in your files. Stack: Streamlit + Chroma +
 
 ---
 
-## Phase 3 — Agents & Tools (Days 21–31)
+## Phase 3 — Agents & Tools (Days 21–32)
 *Goal: go from Q&A bots to agents that take actions — the differentiator. We start with the
 framework everything else builds on (LangChain), then LangGraph, then real agents.*
 
 | Day | Topic |
 |----:|-------|
 | 21 | **LangChain fundamentals** — chat models, prompt templates, LCEL (`prompt \| model \| parser`), output parsers, runnables, memory (LangChain 1.x) ✅ |
-| 22 | LangGraph — state machines for AI: loops, branching, when a straight chain isn't enough |
-| 23 | Tool use / function calling — giving a model tools (`@tool`, `bind_tools`), first principles |
-| 24 | Building a ReAct agent (`create_agent`) — research + summarize tools |
-| 25 | CrewAI — role-based multi-agent, made simple |
-| 26 | AutoGen (Microsoft) — conversation-based multi-agent |
-| 27 | Framework comparison workshop — same agent in 3 frameworks, pick which fits |
-| 28 | Observability: Langfuse — tracing an agent, debugging failures |
-| 29 | Guardrails & safety: prompt-injection defense, output validation |
-| 30 | **Mini-project 3 build day** |
-| 31 | **Mini-project 3 deploy + demo** |
+| 22 | **LangChain in practice** — RAG **with LangChain** (splitters, `Chroma` + local embeddings, retrievers, an LCEL RAG chain) + a **Streamlit × LangChain** chatbot & "chat with your docs" app ✅ |
+| 23 | **LangGraph** — state machines for AI: state/nodes/edges, branching (conditional edges), loops (cycles), reducers (`add_messages`), memory (checkpointer + `thread_id`) ✅ |
+| 24 | Tool use / function calling — giving a model tools (`@tool`, `bind_tools`), first principles |
+| 25 | Building a ReAct agent (`create_agent`) — research + summarize tools |
+| 26 | CrewAI — role-based multi-agent, made simple |
+| 27 | AutoGen (Microsoft) — conversation-based multi-agent |
+| 28 | Framework comparison workshop — same agent in 3 frameworks, pick which fits |
+| 29 | Observability: Langfuse — tracing an agent, debugging failures |
+| 30 | Guardrails & safety: prompt-injection defense, output validation |
+| 31 | **Mini-project 3 build day** |
+| 32 | **Mini-project 3 deploy + demo** |
 
 **🚀 Project 3 — Personal Research Agent.** Researches a topic across the web, takes notes,
 produces a briefing. Student picks the framework (LangGraph / CrewAI / AutoGen). Must use 3+
 tools. Traced in Langfuse. Deployed free.
 
 > **Numbering note (2026-07):** Phase 3 was pulled forward to Day 21 (see the Phase 2 plan-change
-> note). Phase 4's day numbers below still reflect the old schedule and will be reconciled in a
-> later pass; treat Phase 4 as "after Phase 3", not as fixed dates.
+> note). A **LangChain-in-practice day (RAG + Streamlit) was then inserted at Day 22**, pushing
+> LangGraph → 23 and every later Phase-3 day +1 (Phase 3 is now **21–32**). Phase 4's day numbers
+> below still reflect the old schedule and will be reconciled in a later pass; treat Phase 4 as
+> "after Phase 3", not as fixed dates.
 
 ---
 

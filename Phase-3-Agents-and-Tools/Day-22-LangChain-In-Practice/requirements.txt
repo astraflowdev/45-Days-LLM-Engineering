@@ -1,0 +1,10 @@
+# Day 22 - LangChain in Practice: RAG & a Streamlit Chatbot
+# Install with the real CPython (see repo CLAUDE.md).
+langchain                  # core framework + LCEL (from Day 21)
+langchain-groq             # ChatGroq (the LLM, needs GROQ_API_KEY)
+langchain-chroma           # Chroma vector store integration (modern home)
+langchain-huggingface      # local sentence-transformers embeddings, no key
+langchain-text-splitters   # RecursiveCharacterTextSplitter
+sentence-transformers      # the local embedding model (all-MiniLM-L6-v2)
+streamlit                  # the web UI (modules 05-06)
+python-dotenv              # load GROQ_API_KEY from .env
