@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LangGraph Multi-Agent Patterns · Day 26 · Softpro School of AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+  :root{
+    --bg:#211f1d; --slide:#ffffff; --cream:#fbf1e6; --cream2:#fdf8f1;
+    --ink:#2c2a28; --ink-soft:#4f463f; --muted:#8a7f73; --line:#efe3d4;
+    --primary:#e8590c; --primary2:#fb8b3d; --gold:#d99000; --steel:#4e6e81; --olive:#6b8e23; --berry:#c0392b;
+    --radius:24px;
+    --shadow:0 30px 80px -20px rgba(20,12,4,.45),0 8px 24px -12px rgba(20,12,4,.3);
+    --font:"Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+    --mono:"JetBrains Mono","Cascadia Code",Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;font-family:var(--font);color:var(--ink);-webkit-font-smoothing:antialiased;
+    background:radial-gradient(900px 600px at 12% 0%,#2e2a25 0%,transparent 55%),
+               radial-gradient(900px 600px at 100% 100%,#2a201a 0%,transparent 55%),var(--bg);
+    overflow:hidden}
+  .stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:clamp(12px,3vh,44px)}
+  .slide{display:none;width:min(1160px,96vw);height:min(700px,92vh);background:
+      radial-gradient(1100px 480px at 88% -12%,rgba(232,89,12,.06),transparent 60%),var(--slide);
+    border-radius:var(--radius);box-shadow:var(--shadow);padding:clamp(28px,5vw,60px);
+    overflow:hidden;position:relative;flex-direction:column;justify-content:center}
+  .slide.active{display:flex;animation:rise .5s cubic-bezier(.2,.7,.2,1)}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .slide.active>*{animation:fade .6s both}.slide.active>*:nth-child(2){animation-delay:.07s}
+  .slide.active>*:nth-child(3){animation-delay:.14s}.slide.active>*:nth-child(4){animation-delay:.21s}
+  .slide.active>*:nth-child(5){animation-delay:.28s}.slide.active>*:nth-child(6){animation-delay:.35s}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .kicker{font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);margin-bottom:14px}
+  h1{font-size:clamp(2.1rem,5.2vw,3.5rem);font-weight:800;line-height:1.05;letter-spacing:-.02em}
+  h2{font-size:clamp(1.6rem,3.6vw,2.4rem);font-weight:800;line-height:1.1;letter-spacing:-.01em;margin-bottom:18px}
+  p{font-size:clamp(1rem,1.7vw,1.22rem);color:var(--ink-soft);line-height:1.6;max-width:62ch}
+  .lead{font-size:clamp(1.1rem,2vw,1.4rem)}
+  strong{color:var(--ink)}.muted{color:var(--muted)}
+  .grid{display:grid;gap:16px;margin-top:8px}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:18px 20px;transition:transform .2s,box-shadow .2s}
+  .card:hover{transform:translateY(-4px);box-shadow:0 14px 30px -16px rgba(20,12,4,.35)}
+  .card h3{font-size:1.08rem;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .card p{font-size:.96rem;max-width:none}
+  .pill{display:inline-block;background:var(--cream);border:1px solid var(--line);border-radius:999px;
+    padding:7px 16px;font-size:.92rem;font-weight:600;color:var(--ink-soft);margin:5px 6px 0 0}
+  ul.clean{list-style:none;margin-top:10px}
+  ul.clean li{font-size:clamp(1rem,1.7vw,1.18rem);color:var(--ink-soft);line-height:1.5;padding:8px 0 8px 34px;position:relative}
+  ul.clean li::before{content:"";position:absolute;left:0;top:15px;width:14px;height:14px;border-radius:50%;
+    background:var(--primary);box-shadow:0 0 0 4px rgba(232,89,12,.15)}
+  ul.clean li.x::before{background:var(--berry);box-shadow:0 0 0 4px rgba(192,57,43,.15)}
+  ul.clean li.ok::before{background:var(--olive);box-shadow:0 0 0 4px rgba(107,142,35,.15)}
+  .fx{font-family:var(--mono);font-size:.98rem;background:var(--cream);border:1px solid var(--line);
+    border-radius:14px;padding:16px 18px;margin-top:10px;color:var(--ink);line-height:1.7;white-space:pre}
+  .action{background:linear-gradient(135deg,#fff,var(--cream2));border:2px solid var(--primary);
+    border-radius:20px;padding:22px 24px;margin-top:14px}
+  .action .tag{font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--primary)}
+  .action p{font-size:1.12rem;color:var(--ink);font-weight:600;margin-top:6px;max-width:none}
+  .eg{background:var(--cream2);border:1px solid var(--line);border-left:4px solid var(--gold);
+    border-radius:12px;padding:13px 16px;margin-top:14px}
+  .eg .tag{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px}
+  .eg p{font-size:.98rem;max-width:none;margin:0;color:var(--ink-soft)}
+  .eg code,.card code,p code,li code{font-family:var(--mono);background:rgba(217,144,0,.12);padding:1px 5px;border-radius:5px;font-size:.9em;color:var(--ink)}
+  .cover{background:radial-gradient(1200px 500px at 20% -10%,rgba(232,89,12,.16),transparent 60%),
+      radial-gradient(900px 500px at 100% 120%,rgba(217,144,0,.12),transparent 55%),var(--slide)}
+  .brandbar{display:flex;align-items:center;gap:10px;margin-bottom:auto}
+  .dot{width:13px;height:13px;border-radius:50%;background:var(--primary)}
+  .brandbar span{font-weight:700;letter-spacing:.02em}
+  .cover h1 em{font-style:normal;color:var(--primary)}
+  .footer-note{margin-top:auto;color:var(--muted);font-size:.95rem}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center}
+  .label{font-size:.82rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+  .bar{position:fixed;top:0;left:0;height:4px;background:linear-gradient(90deg,var(--primary),var(--primary2));z-index:9;transition:width .3s}
+  .count{position:fixed;left:18px;bottom:14px;color:var(--cream);font-size:.85rem;font-weight:600;opacity:.8;z-index:9;font-variant-numeric:tabular-nums}
+  .nav{position:fixed;right:18px;bottom:14px;display:flex;gap:8px;z-index:9}
+  .nav button{width:42px;height:42px;border-radius:12px;border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.08);color:#fff;font-size:1.1rem;cursor:pointer;backdrop-filter:blur(8px);transition:background .2s}
+  .nav button:hover{background:rgba(255,255,255,.2)}
+  .hint{position:fixed;right:18px;top:16px;color:var(--cream);font-size:.78rem;opacity:.5;z-index:9}
+  .diagram{display:flex;justify-content:center;align-items:center;margin-top:8px}
+  .diagram svg{max-width:100%;height:auto}
+  .cap{text-align:center;color:var(--muted);font-size:.9rem;margin-top:6px}
+  .pipe{display:flex;align-items:stretch;gap:0;margin-top:14px;flex-wrap:wrap}
+  .pipe .stepbox{flex:1;min-width:110px;background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:14px 12px;text-align:center}
+  .pipe .stepbox.model{border-color:var(--primary);background:#fde7d6}
+  .pipe .stepbox h4{font-size:1rem;font-weight:800;color:var(--ink)}
+  .pipe .stepbox small{display:block;color:var(--muted);font-size:.82rem;margin-top:4px}
+  .pipe .arrow{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:800;color:var(--primary);font-size:1.5rem;padding:0 8px}
+  table.cmp{width:100%;border-collapse:collapse;margin-top:12px;font-size:1rem}
+  table.cmp th,table.cmp td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+  table.cmp th{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  table.cmp td.no{color:var(--berry);font-weight:700}
+  table.cmp td.yes{color:var(--olive);font-weight:700}
+  @media(max-width:640px){.g2,.g3,.g4,.twocol{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="bar" id="bar"></div>
+<div class="hint">&rarr; / Space to advance &middot; F for fullscreen</div>
+<div class="stage" id="stage">
+
+  <!-- 1 COVER -->
+  <section class="slide cover active">
+    <div class="brandbar"><span class="dot"></span><span>Softpro School of AI &middot; Day 26</span></div>
+    <div class="kicker">Phase 3 &middot; Agents &amp; Tools</div>
+    <h1>LangGraph multi-agent patterns:<br>when one agent <em>isn't enough</em></h1>
+    <p class="lead" style="margin-top:18px">Day 24 gave you the graph engine; Day 25 built one ReAct agent in a line. Today the leap lands: <strong>an agent is just a node, a team is just a graph.</strong> You wire several agents together in three simple shapes.</p>
+    <div class="footer-note">Sequential &middot; Supervisor &middot; Parallel &middot; runs on free Groq &middot; LangGraph 1.x.</div>
+  </section>
+
+  <!-- 2 RECAP -->
+  <section class="slide">
+    <div class="kicker">Where we were</div>
+    <h2>You already own the engine</h2>
+    <div class="grid g2" style="margin-top:8px">
+      <div class="card"><h3>Day 24 &middot; the graph engine</h3><p><code>StateGraph</code> with nodes, edges, conditional edges, loops, reducers and <code>MemorySaver</code>. You can draw any flow as boxes and arrows and run it.</p></div>
+      <div class="card"><h3>Day 25 &middot; one ReAct agent</h3><p><code>create_agent(model, tools)</code> gave you a single agent that reasons, calls tools, and answers on its own &mdash; a compiled LangGraph under the hood.</p></div>
+    </div>
+    <div class="action">
+      <span class="tag">Today</span>
+      <p>Take several of those agents and make them a <strong>team</strong> &mdash; and you need no new framework to do it.</p>
+    </div>
+  </section>
+
+  <!-- 3 THE CORE IDEA -->
+  <section class="slide">
+    <div class="kicker">The one big idea</div>
+    <h2>An agent is a node. A team is a graph.</h2>
+    <p>A multi-agent system sounds like it needs a new engine. It does not. Each agent is just a <strong>function that reads the state and writes back to it</strong> &mdash; the exact definition of a Day-24 node. Wire a few of those nodes together and you have a team.</p>
+    <div class="fx" style="margin-top:12px">def researcher(state): ...   # an agent  = a NODE
+def writer(state):     ...   # an agent  = a NODE
+def editor(state):     ...   # an agent  = a NODE
+
+graph = StateGraph(State)    # the team  = a GRAPH
+graph.add_node("researcher", researcher)   # ... wire them</div>
+    <p class="cap">No new library today. Multi-agent = <strong>Day 24's StateGraph with more nodes.</strong></p>
+  </section>
+
+  <!-- 4 THREE SHAPES -->
+  <section class="slide">
+    <div class="kicker">The whole day in one picture</div>
+    <h2>Three shapes to wire a team</h2>
+    <div class="grid g3" style="margin-top:8px">
+      <div class="card">
+        <h3>Sequential</h3>
+        <div class="diagram" style="margin-top:2px">
+          <svg viewBox="0 0 240 70" width="240" height="70" role="img" aria-label="Sequential: three boxes in a left to right chain">
+            <defs><marker id="s1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8a7f73"/></marker></defs>
+            <g font-family="Plus Jakarta Sans" font-size="11" font-weight="700" text-anchor="middle">
+              <rect x="6" y="24" width="60" height="30" rx="9" fill="#fde7d6" stroke="#e8590c"/><text x="36" y="43" fill="#e8590c">A</text>
+              <rect x="90" y="24" width="60" height="30" rx="9" fill="#fbf1e6" stroke="#efe3d4"/><text x="120" y="43" fill="#2c2a28">B</text>
+              <rect x="174" y="24" width="60" height="30" rx="9" fill="#eef3f1" stroke="#6b8e23"/><text x="204" y="43" fill="#3f5a18">C</text>
+              <line x1="66" y1="39" x2="86" y2="39" stroke="#8a7f73" stroke-width="2" marker-end="url(#s1)"/>
+              <line x1="150" y1="39" x2="170" y2="39" stroke="#8a7f73" stroke-width="2" marker-end="url(#s1)"/>
+            </g>
+          </svg>
+        </div>
+        <p>Assembly line &mdash; each step feeds the next.</p>
+      </div>
+      <div class="card">
+        <h3>Supervisor</h3>
+        <div class="diagram" style="margin-top:2px">
+          <svg viewBox="0 0 240 70" width="240" height="70" role="img" aria-label="Supervisor: a boss box above three worker boxes">
+            <defs><marker id="s2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8a7f73"/></marker></defs>
+            <g font-family="Plus Jakarta Sans" font-size="11" font-weight="700" text-anchor="middle">
+              <rect x="90" y="4" width="60" height="26" rx="9" fill="#fde7d6" stroke="#e8590c"/><text x="120" y="21" fill="#e8590c">boss</text>
+              <rect x="6" y="44" width="60" height="22" rx="8" fill="#fbf1e6" stroke="#efe3d4"/><text x="36" y="59" fill="#2c2a28">w1</text>
+              <rect x="90" y="44" width="60" height="22" rx="8" fill="#fbf1e6" stroke="#efe3d4"/><text x="120" y="59" fill="#2c2a28">w2</text>
+              <rect x="174" y="44" width="60" height="22" rx="8" fill="#fbf1e6" stroke="#efe3d4"/><text x="204" y="59" fill="#2c2a28">w3</text>
+              <path d="M110 30 L 42 42" fill="none" stroke="#8a7f73" stroke-width="1.6" marker-end="url(#s2)"/>
+              <path d="M120 30 L 120 42" fill="none" stroke="#8a7f73" stroke-width="1.6" marker-end="url(#s2)"/>
+              <path d="M130 30 L 198 42" fill="none" stroke="#8a7f73" stroke-width="1.6" marker-end="url(#s2)"/>
+            </g>
+          </svg>
+        </div>
+        <p>A boss routes each turn to a worker.</p>
+      </div>
+      <div class="card">
+        <h3>Parallel</h3>
+        <div class="diagram" style="margin-top:2px">
+          <svg viewBox="0 0 240 70" width="240" height="70" role="img" aria-label="Parallel: one box fanning out to three and merging into one">
+            <defs><marker id="s3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#8a7f73"/></marker></defs>
+            <g font-family="Plus Jakarta Sans" font-size="10" font-weight="700" text-anchor="middle">
+              <rect x="4" y="26" width="44" height="26" rx="8" fill="#fde7d6" stroke="#e8590c"/><text x="26" y="43" fill="#e8590c">in</text>
+              <rect x="98" y="4" width="44" height="20" rx="7" fill="#fbf1e6" stroke="#efe3d4"/><text x="120" y="18" fill="#2c2a28">r1</text>
+              <rect x="98" y="29" width="44" height="20" rx="7" fill="#fbf1e6" stroke="#efe3d4"/><text x="120" y="43" fill="#2c2a28">r2</text>
+              <rect x="98" y="54" width="44" height="20" rx="7" fill="#fbf1e6" stroke="#efe3d4"/><text x="120" y="68" fill="#2c2a28">r3</text>
+              <rect x="192" y="26" width="44" height="26" rx="8" fill="#eef3f1" stroke="#6b8e23"/><text x="214" y="43" fill="#3f5a18">out</text>
+              <path d="M48 36 L 96 14" fill="none" stroke="#8a7f73" stroke-width="1.5" marker-end="url(#s3)"/>
+              <path d="M48 39 L 96 39" fill="none" stroke="#8a7f73" stroke-width="1.5" marker-end="url(#s3)"/>
+              <path d="M48 42 L 96 64" fill="none" stroke="#8a7f73" stroke-width="1.5" marker-end="url(#s3)"/>
+              <path d="M142 14 L 190 36" fill="none" stroke="#8a7f73" stroke-width="1.5" marker-end="url(#s3)"/>
+              <path d="M142 39 L 190 39" fill="none" stroke="#8a7f73" stroke-width="1.5" marker-end="url(#s3)"/>
+              <path d="M142 64 L 190 42" fill="none" stroke="#8a7f73" stroke-width="1.5" marker-end="url(#s3)"/>
+            </g>
+          </svg>
+        </div>
+        <p>Fan out to specialists, merge results.</p>
+      </div>
+    </div>
+    <p class="cap">Same engine, three wirings. The rest of the deck is one slide-pair per shape.</p>
+  </section>
+
+  <!-- 5 SEQUENTIAL -->
+  <section class="slide">
+    <div class="kicker">Shape 1 &middot; Sequential</div>
+    <h2>The assembly line: researcher &rarr; writer &rarr; editor</h2>
+    <div class="diagram" style="margin-top:2px">
+      <svg viewBox="0 0 860 130" width="860" height="130" role="img" aria-label="Sequential chain: START to researcher to writer to editor to END">
+        <defs><marker id="arSeq" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#8a7f73"/></marker></defs>
+        <g font-family="Plus Jakarta Sans" font-size="14" font-weight="700" text-anchor="middle">
+          <circle cx="46" cy="65" r="24" fill="#fbf1e6" stroke="#efe3d4"/><text x="46" y="70" font-size="11" fill="#8a7f73">START</text>
+          <rect x="120" y="40" width="150" height="50" rx="13" fill="#fde7d6" stroke="#e8590c"/><text x="195" y="70" fill="#e8590c">researcher</text>
+          <rect x="330" y="40" width="150" height="50" rx="13" fill="#fbf1e6" stroke="#efe3d4"/><text x="405" y="70" fill="#2c2a28">writer</text>
+          <rect x="540" y="40" width="150" height="50" rx="13" fill="#eef3f1" stroke="#6b8e23"/><text x="615" y="70" fill="#3f5a18">editor</text>
+          <circle cx="770" cy="65" r="24" fill="#fbf1e6" stroke="#efe3d4"/><text x="770" y="70" font-size="11" fill="#8a7f73">END</text>
+          <line x1="70" y1="65" x2="116" y2="65" stroke="#8a7f73" stroke-width="2" marker-end="url(#arSeq)"/>
+          <line x1="270" y1="65" x2="326" y2="65" stroke="#8a7f73" stroke-width="2" marker-end="url(#arSeq)"/>
+          <line x1="480" y1="65" x2="536" y2="65" stroke="#8a7f73" stroke-width="2" marker-end="url(#arSeq)"/>
+          <line x1="690" y1="65" x2="744" y2="65" stroke="#8a7f73" stroke-width="2" marker-end="url(#arSeq)"/>
+        </g>
+      </svg>
+    </div>
+    <div class="fx" style="margin-top:6px">g = StateGraph(State)
+g.add_node("researcher", researcher)
+g.add_node("writer", writer)
+g.add_node("editor", editor)
+g.add_edge(START, "researcher")
+g.add_edge("researcher", "writer")   # ordinary edges = a straight line
+g.add_edge("writer", "editor")
+g.add_edge("editor", END)</div>
+    <p class="cap"><strong>When to use:</strong> a fixed pipeline where each step needs the previous one's output.</p>
+  </section>
+
+  <!-- 6 SEQUENTIAL HAND-OFF -->
+  <section class="slide">
+    <div class="kicker">Shape 1 &middot; the hand-off</div>
+    <h2>The hand-off lives in the state</h2>
+    <p>Agents never talk directly. The researcher writes <code>notes</code> into the shared state; the writer reads <code>notes</code> and writes <code>draft</code>; the editor reads <code>draft</code>. The state <em>is</em> the conveyor belt.</p>
+    <div class="fx" style="margin-top:8px">class State(TypedDict):
+    topic: str
+    notes: str      # researcher writes this
+    draft: str      # writer reads notes, writes this
+    final: str      # editor reads draft, writes this
+
+def writer(state):
+    return {"draft": llm(f"Write about {state['notes']}")}  # only the key it changed</div>
+    <div class="eg"><span class="tag">Gotcha</span><p>A plain list key <strong>overwrites</strong> &mdash; last writer wins. If two nodes both append to one list, carry it forward yourself or use a <strong>reducer</strong> (Shape 3). For single string fields like above, overwrite is exactly what you want.</p></div>
+  </section>
+
+  <!-- 7 SUPERVISOR -->
+  <section class="slide">
+    <div class="kicker">Shape 2 &middot; Supervisor / hierarchical</div>
+    <h2>A boss routes each turn to a worker</h2>
+    <div class="diagram" style="margin-top:2px">
+      <svg viewBox="0 0 860 220" width="860" height="220" role="img" aria-label="Supervisor: a supervisor node routes to billing, tech, or general workers, each looping back to the supervisor">
+        <defs><marker id="arSup" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#8a7f73"/></marker></defs>
+        <g font-family="Plus Jakarta Sans" font-size="14" font-weight="700" text-anchor="middle">
+          <rect x="350" y="14" width="170" height="52" rx="14" fill="#fde7d6" stroke="#e8590c"/><text x="435" y="40" fill="#e8590c">supervisor</text><text x="435" y="57" font-size="10.5" font-weight="500" fill="#8a7f73">who is next?</text>
+          <rect x="80" y="150" width="150" height="50" rx="13" fill="#fbf1e6" stroke="#efe3d4"/><text x="155" y="180" fill="#2c2a28">billing</text>
+          <rect x="360" y="150" width="150" height="50" rx="13" fill="#fbf1e6" stroke="#efe3d4"/><text x="435" y="180" fill="#2c2a28">tech</text>
+          <rect x="640" y="150" width="150" height="50" rx="13" fill="#fbf1e6" stroke="#efe3d4"/><text x="715" y="180" fill="#2c2a28">general</text>
+          <circle cx="700" cy="40" r="24" fill="#eef3f1" stroke="#6b8e23"/><text x="700" y="45" font-size="11" fill="#3f5a18">END</text>
+          <path d="M380 66 Q 250 100 160 146" fill="none" stroke="#e8590c" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arSup)"/>
+          <path d="M435 66 L 435 146" fill="none" stroke="#e8590c" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arSup)"/>
+          <path d="M490 66 Q 620 100 710 146" fill="none" stroke="#e8590c" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arSup)"/>
+          <path d="M520 40 L 674 40" fill="none" stroke="#6b8e23" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arSup)"/>
+          <path d="M155 150 Q 155 90 348 48" fill="none" stroke="#4e6e81" stroke-width="1.8" marker-end="url(#arSup)"/>
+          <path d="M715 200 Q 715 210 435 210 Q 260 210 400 70" fill="none" stroke="#4e6e81" stroke-width="1.8" marker-end="url(#arSup)" opacity="0"/>
+          <text x="255" y="110" font-size="11.5" font-weight="600" fill="#4e6e81">workers loop back &uarr;</text>
+          <text x="600" y="30" font-size="11.5" font-weight="600" fill="#6b8e23">done</text>
+        </g>
+      </svg>
+    </div>
+    <div class="fx" style="margin-top:4px">g.add_conditional_edges("supervisor", route, {"billing":"billing","tech":"tech","general":"general","done":END})
+g.add_edge("billing", "supervisor")   # every worker edges BACK to the boss
+g.add_edge("tech", "supervisor")      # that back-edge makes it a hierarchy</div>
+    <p class="cap"><strong>When to use:</strong> the worker (or order) depends on the input &mdash; routing and judgement.</p>
+  </section>
+
+  <!-- 8 SUPERVISOR ROUTER -->
+  <section class="slide">
+    <div class="kicker">Shape 2 &middot; the router</div>
+    <h2>A word becomes the next node</h2>
+    <p>The supervisor (an LLM or a rule) writes a <strong>decision word</strong> into the state. The router function &mdash; the same <code>add_conditional_edges</code> mechanic from Day 24 &mdash; turns that word into the name of the next node, or <code>END</code>.</p>
+    <div class="twocol" style="margin-top:6px">
+      <div>
+        <div class="fx">def route(state) -> str:
+    # supervisor put its choice here
+    return state["next"]   # "billing"
+                           # "tech"
+                           # "general"
+                           # or "done"</div>
+      </div>
+      <div>
+        <ul class="clean">
+          <li>The router <strong>returns a key</strong>; the dict maps key &rarr; node name.</li>
+          <li>Workers edge back to the supervisor, so it can route again &mdash; a loop.</li>
+          <li><code>recursion_limit</code> is the safety belt so a mis-routing boss can't spin forever.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="eg"><span class="tag">Straight from Day 24</span><p>This is the <strong>conditional-edge + loop</strong> combo you already built &mdash; only now each destination is a whole agent instead of a plain function.</p></div>
+  </section>
+
+  <!-- 9 PARALLEL -->
+  <section class="slide">
+    <div class="kicker">Shape 3 &middot; Parallel (fan-out / fan-in)</div>
+    <h2>Ask three specialists at once</h2>
+    <div class="diagram" style="margin-top:2px">
+      <svg viewBox="0 0 860 220" width="860" height="220" role="img" aria-label="Parallel: dispatch fans out to three reviewers running concurrently, then merges into a combine node">
+        <defs><marker id="arPar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#8a7f73"/></marker></defs>
+        <g font-family="Plus Jakarta Sans" font-size="14" font-weight="700" text-anchor="middle">
+          <rect x="40" y="85" width="150" height="52" rx="14" fill="#fde7d6" stroke="#e8590c"/><text x="115" y="115" fill="#e8590c">dispatch</text>
+          <rect x="360" y="18" width="160" height="46" rx="12" fill="#fbf1e6" stroke="#efe3d4"/><text x="440" y="46" fill="#2c2a28">tone reviewer</text>
+          <rect x="360" y="88" width="160" height="46" rx="12" fill="#fbf1e6" stroke="#efe3d4"/><text x="440" y="116" fill="#2c2a28">facts reviewer</text>
+          <rect x="360" y="158" width="160" height="46" rx="12" fill="#fbf1e6" stroke="#efe3d4"/><text x="440" y="186" fill="#2c2a28">seo reviewer</text>
+          <rect x="670" y="85" width="150" height="52" rx="14" fill="#eef3f1" stroke="#6b8e23"/><text x="745" y="115" fill="#3f5a18">combine</text>
+          <path d="M190 105 L 356 45" fill="none" stroke="#8a7f73" stroke-width="2" marker-end="url(#arPar)"/>
+          <path d="M190 111 L 356 111" fill="none" stroke="#8a7f73" stroke-width="2" marker-end="url(#arPar)"/>
+          <path d="M190 117 L 356 179" fill="none" stroke="#8a7f73" stroke-width="2" marker-end="url(#arPar)"/>
+          <path d="M520 45 L 666 105" fill="none" stroke="#8a7f73" stroke-width="2" marker-end="url(#arPar)"/>
+          <path d="M520 111 L 666 111" fill="none" stroke="#8a7f73" stroke-width="2" marker-end="url(#arPar)"/>
+          <path d="M520 179 L 666 117" fill="none" stroke="#8a7f73" stroke-width="2" marker-end="url(#arPar)"/>
+          <text x="250" y="150" font-size="11.5" font-weight="600" fill="#e8590c">fan-out (run together)</text>
+          <text x="600" y="150" font-size="11.5" font-weight="600" fill="#6b8e23">fan-in (wait for all)</text>
+        </g>
+      </svg>
+    </div>
+    <div class="fx" style="margin-top:4px">for r in ["tone", "facts", "seo"]:
+    g.add_edge("dispatch", r)   # fan-out: one node -> several (run concurrently)
+    g.add_edge(r, "combine")    # fan-in : several -> one node (waits for all)</div>
+    <p class="cap"><strong>When to use:</strong> independent reviewers / opinions on the <em>same</em> input.</p>
+  </section>
+
+  <!-- 10 PARALLEL REDUCER -->
+  <section class="slide">
+    <div class="kicker">Shape 3 &middot; the reducer</div>
+    <h2>The reducer keeps every opinion</h2>
+    <p>Three reviewers all write to the same field <em>at the same time</em>. Without help, the last one wins and two notes vanish. A <strong>reducer</strong> (Day 24) tells LangGraph to <strong>add</strong> updates instead of replacing them.</p>
+    <div class="twocol" style="margin-top:6px">
+      <div>
+        <div class="fx">import operator
+from typing import Annotated
+
+class State(TypedDict):
+    blurb: str
+    # each reviewer appends one note
+    notes: Annotated[list, operator.add]
+
+def tone_reviewer(state):
+    return {"notes": ["tone: warmer intro"]}</div>
+      </div>
+      <div>
+        <ul class="clean">
+          <li>Each specialist returns a <strong>single-item list</strong>.</li>
+          <li><code>Annotated[list, operator.add]</code> <strong>concatenates</strong> them, so all three survive.</li>
+          <li class="x">Plain <code>notes: list</code> &rarr; last writer overwrites, two notes lost.</li>
+        </ul>
+        <div class="eg" style="margin-top:8px"><span class="tag">Nothing new</span><p>Identical to Day 24's <code>add_messages</code> / <code>operator.add</code> reducers &mdash; just applied to a review panel.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 MEMORY -->
+  <section class="slide">
+    <div class="kicker">Give the team a memory</div>
+    <h2>Memory: exactly the Day-24 two knobs</h2>
+    <div class="twocol">
+      <div>
+        <div class="fx">from langgraph.checkpoint.memory \
+    import MemorySaver
+
+team = g.compile(
+    checkpointer=MemorySaver())
+
+cfg = {"configurable":
+       {"thread_id": "roll-42"}}
+team.invoke({"topic": "UPI safety"}, cfg)
+team.invoke({"topic": "one more?"}, cfg)</div>
+      </div>
+      <div>
+        <ul class="clean">
+          <li>Compile the <strong>whole team graph</strong> with a checkpointer.</li>
+          <li>A <code>thread_id</code> per conversation &mdash; same id remembers, new id starts clean.</li>
+          <li>The checkpointer saves the <strong>entire shared state</strong>, notes and drafts included.</li>
+        </ul>
+        <div class="eg" style="margin-top:8px"><span class="tag">No multi-agent magic</span><p>A team is one compiled graph. Memory works the same as for a single node &mdash; nothing special because there are many agents.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 WHICH SHAPE WHEN -->
+  <section class="slide">
+    <div class="kicker">Choose the wiring</div>
+    <h2>Which shape when?</h2>
+    <table class="cmp">
+      <tr><th>Shape</th><th>Wiring</th><th>Use it when</th></tr>
+      <tr><td><strong>Sequential</strong></td><td>plain <code>add_edge</code> chain</td><td>Fixed order &mdash; a pipeline; each step needs the last.</td></tr>
+      <tr><td><strong>Supervisor</strong></td><td><code>add_conditional_edges</code> + back-edges</td><td>Dynamic routing &mdash; the worker depends on the input; judgement.</td></tr>
+      <tr><td><strong>Parallel</strong></td><td>fan-out / fan-in + reducer</td><td>Independent opinions on one input; speed.</td></tr>
+    </table>
+    <div class="eg"><span class="tag">In practice</span><p>Real teams <strong>combine</strong> them &mdash; e.g. a supervisor that routes to a parallel review panel, whose output flows down a sequential polish line. You already have all three pieces.</p></div>
+  </section>
+
+  <!-- 13 MINI PROJECT -->
+  <section class="slide">
+    <div class="kicker">Today's build &middot; mini-project</div>
+    <h2>SoftDesk Content Crew &mdash; grown 6 times</h2>
+    <p>ONE example &mdash; turn a <strong>topic</strong> into a polished marketing <strong>blurb</strong> &mdash; grown one shape at a time, so each pattern lands on the same familiar code.</p>
+    <div class="pipe" style="margin-top:14px">
+      <div class="stepbox"><h4>1</h4><small>single writer<br>one node</small></div>
+      <div class="arrow">&rarr;</div>
+      <div class="stepbox"><h4>2</h4><small>researcher+writer<br>sequential</small></div>
+      <div class="arrow">&rarr;</div>
+      <div class="stepbox"><h4>3</h4><small>add editor<br>longer line</small></div>
+      <div class="arrow">&rarr;</div>
+      <div class="stepbox"><h4>4</h4><small>supervisor<br>routes work</small></div>
+      <div class="arrow">&rarr;</div>
+      <div class="stepbox"><h4>5</h4><small>review panel<br>parallel</small></div>
+      <div class="arrow">&rarr;</div>
+      <div class="stepbox model"><h4>6</h4><small>crew + memory<br>Streamlit UI</small></div>
+    </div>
+    <p class="cap">Each <code>stepN_*.py</code> runs standalone and adds exactly one shape. Offline-graceful. Folder: <code>mini-project/</code></p>
+  </section>
+
+  <!-- 14 ROADMAP -->
+  <section class="slide">
+    <div class="kicker">Where it fits</div>
+    <h2>You just built the frameworks by hand</h2>
+    <div class="diagram" style="margin-top:6px">
+      <svg viewBox="0 0 860 150" width="860" height="150" role="img" aria-label="Roadmap: Day 24 engine, Day 25 one agent, Day 26 multi-agent by hand, then frameworks">
+        <defs><marker id="arC" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#8a7f73"/></marker></defs>
+        <g font-family="Plus Jakarta Sans" font-size="13" font-weight="700" text-anchor="middle">
+          <rect x="20" y="55" width="180" height="48" rx="12" fill="#fbf1e6" stroke="#efe3d4"/><text x="110" y="79" fill="#2c2a28">Day 24 &middot; LangGraph</text><text x="110" y="95" font-size="10.5" font-weight="500" fill="#8a7f73">the graph engine</text>
+          <rect x="240" y="55" width="180" height="48" rx="12" fill="#fbf1e6" stroke="#efe3d4"/><text x="330" y="79" fill="#2c2a28">Day 25 &middot; create_agent</text><text x="330" y="95" font-size="10.5" font-weight="500" fill="#8a7f73">one ReAct agent</text>
+          <rect x="460" y="55" width="180" height="48" rx="12" fill="#fde7d6" stroke="#e8590c"/><text x="550" y="79" fill="#e8590c">Day 26 &middot; multi-agent</text><text x="550" y="95" font-size="10.5" font-weight="500" fill="#8a7f73">3 shapes, by hand</text>
+          <rect x="680" y="55" width="180" height="48" rx="12" fill="#eef3f1" stroke="#6b8e23"/><text x="770" y="79" fill="#3f5a18">Next &middot; CrewAI / AutoGen</text><text x="770" y="95" font-size="10.5" font-weight="500" fill="#8a7f73">crews, automated</text>
+          <line x1="200" y1="79" x2="236" y2="79" stroke="#8a7f73" stroke-width="2" marker-end="url(#arC)"/>
+          <line x1="420" y1="79" x2="456" y2="79" stroke="#8a7f73" stroke-width="2" marker-end="url(#arC)"/>
+          <line x1="640" y1="79" x2="676" y2="79" stroke="#8a7f73" stroke-width="2" marker-end="url(#arC)"/>
+        </g>
+      </svg>
+    </div>
+    <p style="margin-top:10px">Tomorrow's frameworks &mdash; CrewAI, AutoGen &mdash; give agents <strong>roles</strong> and orchestrate crews for you. Because you wired these three shapes by hand, you'll recognise <em>exactly</em> what they do under the hood: sequential, supervisor, parallel &mdash; on a graph engine.</p>
+  </section>
+
+  <!-- 15 RECAP / CLOSE -->
+  <section class="slide cover">
+    <div class="brandbar"><span class="dot"></span><span>Softpro School of AI &middot; Day 26</span></div>
+    <h1>An agent is a node.<br>A team is a <em>graph</em>.</h1>
+    <p class="lead" style="margin-top:18px">Three shapes wire any team on the engine you already own: <strong>Sequential</strong> (assembly line), <strong>Supervisor</strong> (a boss routes), <strong>Parallel</strong> (fan-out / fan-in with a reducer). No new framework &mdash; just more nodes.</p>
+    <div class="footer-note">Next: CrewAI &mdash; role-based crews that automate exactly these shapes.</div>
+  </section>
+
+</div>
+
+<div class="count" id="count">1 / 15</div>
+<div class="nav"><button id="prev" aria-label="Previous">&lsaquo;</button><button id="full" aria-label="Fullscreen">&#9974;</button><button id="next" aria-label="Next">&rsaquo;</button></div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];let i=0;
+  const bar=document.getElementById('bar'),count=document.getElementById('count');
+  function show(n){i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    bar.style.width=((i+1)/slides.length*100)+'%';count.textContent=(i+1)+' / '+slides.length;}
+  function next(){show(i+1)}function prev(){show(i-1)}
+  document.getElementById('next').onclick=next;document.getElementById('prev').onclick=prev;
+  document.getElementById('full').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' ')next();
+    else if(e.key==='ArrowLeft')prev();
+    else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);
+    else if(e.key==='f'||e.key==='F')document.getElementById('full').click();});
+  document.getElementById('stage').addEventListener('click',e=>{
+    if(e.target.closest('.nav'))return;const x=e.clientX/window.innerWidth;x>0.5?next():prev();});
+  show(0);
+</script>
+</body>
+</html>

@@ -11,7 +11,7 @@ folder and is broken into small, numbered, runnable modules so you can learn one
 45-Days-LLM-Engineering/
 ├── Phase-1-Foundations/         Days 1–15
 ├── Phase-2-RAG-and-Memory/      Days 16–20
-├── Phase-3-Agents-and-Tools/    Days 21–32
+├── Phase-3-Agents-and-Tools/    Days 21–33
 ├── Phase-4-Capstone/            Days 39–46
 └── docs/                        Syllabus & reference material
 ```
@@ -63,8 +63,8 @@ Days **8–15** begin the AI track: HTTP/`requests`, async, `dotenv`, Pydantic, 
 ### Phase 2 — RAG & Memory (Days 16–20)
 CLI chatbot (conversation memory), embeddings, semantic search, Chroma, Streamlit → **Mini-project 1: Chat With Your Documents** (Day 20).
 
-### Phase 3 — Agents & Tools (Days 21–32)
-LangChain fundamentals (LCEL, prompts, parsers, memory), LangChain in practice (RAG + Streamlit apps), tools & function calling + a "Chat With Your Database" text-to-SQL agent, LangGraph, ReAct agents, CrewAI, AutoGen, observability (Langfuse), guardrails → **Mini-project 3: Research Agent**.
+### Phase 3 — Agents & Tools (Days 21–33)
+LangChain fundamentals (LCEL, prompts, parsers, memory), LangChain in practice (RAG + Streamlit apps), tools & function calling + a "Chat With Your Database" text-to-SQL agent, LangGraph, ReAct agents, LangGraph multi-agent patterns (sequential/supervisor/parallel), CrewAI, AutoGen, observability (Langfuse), guardrails → **Mini-project 3: Research Agent**.
 
 ### Phase 4 — Capstone + Placement (Days 39–46)
 Capstone build sprint, deployment, demo day, resume/portfolio.

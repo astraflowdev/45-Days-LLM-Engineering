@@ -88,7 +88,7 @@ questions → cited answers, grounded in your files. Stack: Streamlit + Chroma +
 
 ---
 
-## Phase 3 — Agents & Tools (Days 21–32)
+## Phase 3 — Agents & Tools (Days 21–33)
 *Goal: go from Q&A bots to agents that take actions — the differentiator. We start with the
 framework everything else builds on (LangChain), then LangGraph, then real agents.*
 
@@ -99,13 +99,14 @@ framework everything else builds on (LangChain), then LangGraph, then real agent
 | 23 | **LangChain tools + Chat With Your Database** — tools / function calling (`@tool`, `bind_tools`), the hand-written tool-calling loop, and a **text-to-SQL agent** over a SQLite store (CLI + Streamlit) ✅ |
 | 24 | **LangGraph** — state machines for AI: state/nodes/edges, branching (conditional edges), loops (cycles), reducers (`add_messages`), memory (checkpointer + `thread_id`) ✅ |
 | 25 | **Building a ReAct agent** (`create_agent`) — the ReAct loop (Reason→Act→Observe) in one line; a model + toolbox, `system_prompt`, streaming the steps, and memory (checkpointer + `thread_id`); mini-project **SoftBot** (multi-tool assistant, CLI + Streamlit) ✅ |
-| 26 | CrewAI — role-based multi-agent, made simple |
-| 27 | AutoGen (Microsoft) — conversation-based multi-agent |
-| 28 | Framework comparison workshop — same agent in 3 frameworks, pick which fits |
-| 29 | Observability: Langfuse — tracing an agent, debugging failures |
-| 30 | Guardrails & safety: prompt-injection defense, output validation |
-| 31 | **Mini-project 3 build day** |
-| 32 | **Mini-project 3 deploy + demo** |
+| 26 | **LangGraph multi-agent patterns** — teams of agents on the graph engine: sequential (assembly line), supervisor/hierarchical (routing + back-edge), parallel (fan-out/fan-in + reducers), and team memory; mini-project **SoftDesk Content Crew** (one example scaled 6 steps, CLI + Streamlit) ✅ |
+| 27 | CrewAI — role-based multi-agent, made simple |
+| 28 | AutoGen (Microsoft) — conversation-based multi-agent |
+| 29 | Framework comparison workshop — same agent in 3 frameworks, pick which fits |
+| 30 | Observability: Langfuse — tracing an agent, debugging failures |
+| 31 | Guardrails & safety: prompt-injection defense, output validation |
+| 32 | **Mini-project 3 build day** |
+| 33 | **Mini-project 3 deploy + demo** |
 
 **🚀 Project 3 — Personal Research Agent.** Researches a topic across the web, takes notes,
 produces a briefing. Student picks the framework (LangGraph / CrewAI / AutoGen). Must use 3+
@@ -115,7 +116,9 @@ tools. Traced in Langfuse. Deployed free.
 > note). A **LangChain-in-practice day (RAG + Streamlit) was then inserted at Day 22**, pushing
 > LangGraph → 23 and every later Phase-3 day +1. **Then tools were pulled *before* LangGraph:** a
 > **Tools + "Chat With Your Database" day was inserted at Day 23**, moving LangGraph → 24. (Tools had
-> been the planned Day 24, so this is effectively a swap plus a project — Phase 3 stays **21–32**.)
+> been the planned Day 24, so this is effectively a swap plus a project.) **Then a LangGraph
+> multi-agent-patterns practice day was inserted at Day 26** (sequential/supervisor/parallel, by hand
+> on the graph engine), pushing CrewAI → 27 and every later Phase-3 day +1 — **Phase 3 is now 21–33**.
 > Phase 4's day numbers below still reflect the old schedule and will be reconciled in a later pass;
 > treat Phase 4 as "after Phase 3", not as fixed dates.
 
